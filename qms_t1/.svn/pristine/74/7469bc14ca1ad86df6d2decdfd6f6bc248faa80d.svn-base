@@ -1,0 +1,36 @@
+package com.qms.approve.dao;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.qms.approve.vo.AprvVO;
+import com.qms.table.vo.approve.AprvFileVO;
+import com.qms.table.vo.approve.AprvInfoVO;
+import com.qms.table.vo.approve.AprvLineVO;
+
+@Repository
+public interface ApproveDao {
+	public int selectApproveCount() throws Exception;
+	
+	// 결재진행중 조회
+	public List<AprvVO> selectApprovingList(AprvVO vo) throws Exception;
+	
+	// 결재완료 조회
+	public List<AprvVO> selectApprovedList(AprvVO vo) throws Exception;
+		
+	// 나의기안서 조회
+	public List<AprvVO> selectMyApproveList(AprvVO vo) throws Exception;
+	
+	// 페이징
+	public int selectTotalAprvCount(AprvInfoVO vo)throws Exception;
+	
+	// 기안서 상세조회
+	public AprvVO selectApproveDtl(AprvVO vo)throws Exception;
+	
+	// 기안서 라인조회
+	public List<AprvLineVO> selectAprvLineList(AprvVO vo)throws Exception;
+	
+	// 기안서 파일조회
+	public List<AprvFileVO> selectAprvFileList(AprvVO vo)throws Exception;
+}

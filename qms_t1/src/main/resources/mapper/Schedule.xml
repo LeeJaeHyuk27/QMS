@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qms.schedule.dao.ScheduleDao">
+					 
+	<resultMap type="com.qms.schedule.vo.ScheduleVO" id="scheduleMap">
+		<result property="userId" 			column="USER_ID"/>
+		<result property="scheduleSeq" 		column="SCHEDULE_SEQ"/>
+		<result property="scheduleContent" 	column="SCHEDULE_CONTENT"/>
+		<result property="scheduleStatus" 	column="SCHEDULE_STATUS"/>
+		<result property="startDt" 			column="START_DT"/>
+		<result property="endDt" 			column="END_DT"/>
+		<result property="regDt" 			column="REG_DT"/>
+		<result property="regUserId" 		column="REG_USER_ID"/>
+		<result property="updDt" 			column="UPD_DT"/>
+		<result property="updUserId" 		column="UPD_USER_ID"/>
+		<result property="scheduleDt" 		column="SCHEDULE_DT"/>
+		<result property="startDtHour" 		column="START_DT_HOUR"/>
+		<result property="startDtMin" 		column="START_DT_MIN"/>
+		<result property="endDtHour" 		column="END_DT_HOUR"/>		
+		<result property="endDtMin" 		column="END_DT_MIN"/>		
+	</resultMap>
+	<select id="selectScheduleInfo" resultMap="scheduleMap">
+		SELECT 
+		    SCHEDULE_CONTENT,
+		    SCHEDULE_STATUS,
+		    TO_CHAR(START_DT, 'MMDD') START_DT,
+		    TO_CHAR(END_DT, 'MMDD') END_DT
+		FROM
+		    TB_SCHEDULE_INFO
+		WHERE
+		    TO_CHAR(START_DT, 'YY/MM') = #{scheduleDt}
+		OR
+		    TO_CHAR(END_DT, 'YY/MM') = #{scheduleDt}
+		AND
+		    USER_ID = 'test111'
+		ORDER BY
+			START_DT
+	</select>
+	<select id="selectDtlInfo" resultMap="scheduleMap">
+		SELECT
+			SCHEDULE_SEQ,
+		    SCHEDULE_CONTENT,
+		    SCHEDULE_STATUS,
+		    TO_CHAR(START_DT, 'YYYY-MM-DD') START_DT,
+		    TO_CHAR(START_DT, 'HH24') START_DT_HOUR,
+		    TO_CHAR(START_DT, 'MI') START_DT_MIN,
+		    TO_CHAR(END_DT, 'YYYY-MM-DD') END_DT,
+		    TO_CHAR(END_DT, 'HH24') END_DT_HOUR,
+		    TO_CHAR(END_DT, 'MI') END_DT_MIN
+		FROM
+		    TB_SCHEDULE_INFO
+		WHERE
+		    USER_ID = 'test111'
+		AND
+		    #{scheduleDt} BETWEEN TO_CHAR(START_DT, 'YYYY-MM-DD')
+		                    AND TO_CHAR(END_DT, 'YYYY-MM-DD')
+	</select>
+	<delete id="deleteSchedule">
+		DELETE
+	    	TB_SCHEDULE_INFO
+		WHERE
+		    #{scheduleDt} BETWEEN TO_CHAR(START_DT, 'YYYY-MM-DD')
+		                    AND TO_CHAR(END_DT, 'YYYY-MM-DD')
+	</delete>
+	<update  id="insertNewScheduleDtl">
+    	<foreach collection="scheduleList" item="item" open="INSERT ALL" index="idx" close="SELECT * FROM DUAL" separator=" ">
+        	INTO TB_SCHEDULE_INFO (
+        		USER_ID,
+            	SCHEDULE_SEQ,
+            	SCHEDULE_CONTENT,
+            	SCHEDULE_STATUS,
+           		START_DT,
+            	END_DT,
+            	REG_DT
+            )
+            VALUES (
+                'test111',
+                (
+	                    SELECT
+	                    	NVL(MAX(SCHEDULE_SEQ), 0) + 1 + #{idx} 
+	                    FROM
+	                    	TB_SCHEDULE_INFO
+	                    ),
+                #{item.scheduleContent},
+                #{item.scheduleStatus},
+                TO_DATE(#{item.startDt}||'-'||#{item.startDtHour}||'-'||#{item.startDtMin}, 'YY/MM/DD/HH24/MI'),
+                TO_DATE(#{item.endDt}||'-'||#{item.endDtHour}||'-'||#{item.endDtMin}, 'YY/MM/DD/HH24/MI'),
+                SYSDATE
+            )
+    	</foreach>
+	</update>
+</mapper>

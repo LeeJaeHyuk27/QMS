@@ -1,0 +1,51 @@
+package com.qms.approve.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.qms.approve.dao.ApproveDao;
+import com.qms.approve.vo.AprvVO;
+import com.qms.table.vo.approve.AprvFileVO;
+import com.qms.table.vo.approve.AprvInfoVO;
+import com.qms.table.vo.approve.AprvLineVO;
+
+@Service
+public class ApproveService {
+
+	@Autowired
+	ApproveDao dao;
+	
+	public int selectApproveCount() throws Exception{
+		return dao.selectApproveCount();
+	}
+	// 결재진행중 조회
+	public List<AprvVO> selectApprovingList(AprvVO vo) throws Exception{
+		return dao.selectApprovingList(vo);
+	}
+	// 결재완료 조회
+	public List<AprvVO> selectApprovedList(AprvVO vo) throws Exception{
+		return dao.selectApprovedList(vo);
+	}
+	// 나의기안서 조회
+	public List<AprvVO> selectMyApproveList(AprvVO vo) throws Exception{
+		return dao.selectMyApproveList(vo);
+	}
+	// 페이징
+	public int selectTotalAprvCount(AprvInfoVO vo)throws Exception{
+		return dao.selectTotalAprvCount(vo);
+	}
+	// 기안서 상세조회
+	public AprvVO selectApproveDtl(AprvVO vo)throws Exception{
+		return dao.selectApproveDtl(vo);
+	}
+	// 기안서 라인조회
+	public List<AprvLineVO> selectAprvLineList(AprvVO vo)throws Exception{
+		return dao.selectAprvLineList(vo);
+	}
+	// 기안서 파일조회
+	public List<AprvFileVO> selectAprvFileList(AprvVO vo)throws Exception{
+		return dao.selectAprvFileList(vo);
+	}
+}
